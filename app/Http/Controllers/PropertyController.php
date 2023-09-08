@@ -12,7 +12,7 @@ class PropertyController extends Controller
 {
     public function index(FilterRequest $request){
 
-        $query = Property::query();
+        $query = Property::query()->with('images');
         if($title = $request->validated('title')){
             $query->where('title','LIKE',"%{$title}%");
         }
@@ -29,7 +29,7 @@ class PropertyController extends Controller
 
         return view('property.index',
         [
-            'properties' => $query->orderBy('id','desc')->paginate(4),
+            'properties' => $query->recent()->available(true)->paginate(25),
             'input' => $request->validated()
         ]
     );
@@ -48,6 +48,6 @@ class PropertyController extends Controller
     public function contact (PropertyContactRequest $request, Property $property){
 
         Mail::send( new PropertyContactMail($property,$request->validated()) );
-        return back()->with('success', 'Email, bien envoyé');
+        return back()->with('success', 'Email, bien envoyée');
     }
 }

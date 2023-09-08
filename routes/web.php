@@ -47,6 +47,8 @@ Route::prefix('/admin')->middleware('auth')->name('admin.')->group(function(){
     Route::resource('property',PropertyController::class)->except('show'); // Nous pouvons également faire ->only(['index','create','destroy',...])
     Route::delete('/{image}',[PropertyController::class,'deleteFile'])->name('image.delete');
 
+    Route::post('/property/restore/{property}',[PropertyController::class, 'restoreProperty'])->name('property.restore');
+
     Route::resource('option',OptionController::class)->except('show');
 
 });

@@ -3,9 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -20,8 +24,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'role',
         'password',
     ];
+
+
+    // Scope is used to defined specific query to use it
+    public function scopeAdmin(Builder $builder) : Builder{
+         return $builder->where('role','=','admin');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -42,4 +53,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    // Others methods to do casting and mutation, on peut utiliser cette technique pour enregistrer les données sous forme de Json dans la bd avec la méthode set de l'Attribute et récuperer sous forme de tableau sous forme de tableau avec get
+
+
+    protected function name() : Attribute {
+         return Attribute::make(
+            get: fn (?string $v) => strtoupper($v),
+            set: fn (string $value): ?string=> strtolower($value)
+         );
+    }
+
+    protected function password() : Attribute{
+
+        // Ceci étant, à l'ajout d'un user dans la bd, son password est hashée en même temps
+
+        return Attribute::make(
+          set: fn (string $v) => Hash::make($v)
+        );
+    }
 }

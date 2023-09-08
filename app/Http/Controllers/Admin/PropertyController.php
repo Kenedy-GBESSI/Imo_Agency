@@ -8,9 +8,9 @@ use App\Models\Image;
 use App\Models\Option;
 use App\Models\Property;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class PropertyController extends Controller
 {
@@ -20,8 +20,14 @@ class PropertyController extends Controller
     public function index() : View
     {
 
+      //   dd(User::orderBy('created_at','desc')->get());
+
+      // Use of scope
+      //   dd(User::admin()->get());
+
+
       return view('admin.properties.index',[
-        'properties' => Property::orderBy('created_at','desc')->paginate(2)
+        'properties' => Property::recent()->withTrashed()->paginate(25)
       ]);
     }
 
@@ -133,13 +139,33 @@ class PropertyController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Property $property)
+    public function destroy(string $property)
     {
-        $property->delete();
+
+        $propertyWithTrashed = Property::withTrashed()->where('id','=',$property)->first();
+
+        // dd($propertyWithTrashed->trashed());
+
+        if($propertyWithTrashed->trashed()){
+            $propertyWithTrashed->images()->delete();
+            Storage::disk('public')->deleteDirectory('properties/'.$property);
+            $propertyWithTrashed->forceDelete();
+        }else{
+          $propertyWithTrashed->delete();
+        }
+
         return $this->redirectNext('admin.property.index',[
             'statut' => 'success',
             'value' => 'Le bien a bien été supprimé'
         ]);
 
+    }
+
+    public function restoreProperty(string $id){
+        Property::withTrashed()->where('id','=',$id)->restore();
+        return $this->redirectNext('admin.property.index',[
+             'statut' => 'success',
+             'value' => 'Le bien a bien été restoré'
+        ]);
     }
 }

@@ -3,6 +3,6 @@
 @section('main')
   <div class="container">
    @include('shared.flash')
-  @yield('content')
+   @yield('content')
   </div>
 @endsection

@@ -15,9 +15,9 @@
 </div>
 <div class="container my-4">
     <h3>Les biens</h3>
-    <div class="row vstack gap-md-0 gap-1">
+    <div class="row hstack gap-md-0 gap-1">
         @forelse ($properties as $property)
-            <div class="col-md-3 col-12">
+            <div class="col-3 mt-2">
                 @include('property.card')
             </div>
         @empty
