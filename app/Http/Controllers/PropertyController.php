@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ContactEvent;
 use App\Http\Requests\FilterRequest;
 use App\Http\Requests\PropertyContactRequest;
 use App\Mail\PropertyContactMail;
@@ -47,7 +48,10 @@ class PropertyController extends Controller
 
     public function contact (PropertyContactRequest $request, Property $property){
 
-        Mail::send( new PropertyContactMail($property,$request->validated()) );
+        // Mail::send( new PropertyContactMail($property,$request->validated()) );
+        // event(new ContactEvent($property,$request->validated()));pour faire ceci , exactement on peut utiliser le code suivant:
+        ContactEvent::dispatch($property,$request->validated()); // or dispatchIf when we have a condition
+
         return back()->with('success', 'Email, bien envoyée');
     }
 }

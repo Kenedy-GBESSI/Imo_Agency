@@ -9,11 +9,15 @@ use App\Models\Option;
 use App\Models\Property;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Storage;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+
 
 class PropertyController extends Controller
 {
+
+    public function __construct()
+    {
+        // $this->authorizeResource(Property::class,'property');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -118,6 +122,7 @@ class PropertyController extends Controller
      */
     public function update(PropertyRequest $request, Property $property)
     {
+
         $property->update($request->validated());
         $property->options()->sync($request->validated('options'));
         // dd($request->validated('images'));
@@ -143,6 +148,7 @@ class PropertyController extends Controller
     {
 
         $propertyWithTrashed = Property::withTrashed()->where('id','=',$property)->first();
+
 
         // dd($propertyWithTrashed->trashed());
 

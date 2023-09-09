@@ -42,7 +42,7 @@ $routeName = request()->route()->getName()
           <ul class="navbar-nav">
 
             @auth
-
+            @can('all-admins')
             <li class="nav-item">
                 <a @class(['nav-link', 'active' => str_starts_with($routeName,'admin.option')])  href="{{route('admin.option.index')}}">Gérer les options</a>
               </li>
@@ -50,8 +50,8 @@ $routeName = request()->route()->getName()
              <li class="nav-item">
                 <a @class(['nav-link', 'active' => str_contains($routeName,'admin.property')])  href="{{ route('admin.property.index')}}">Gérer les biens</a>
               </li>
-
-            @endauth
+              @endcan
+              @endauth
 
              <li class="nav-item">
                 <a @class(['nav-link', 'active' => str_contains($routeName,'property.index')])  href="{{route('property.index')}}">Biens</a>
@@ -60,9 +60,9 @@ $routeName = request()->route()->getName()
           </ul>
           <div class="navbar-nav">
             {{-- @include('shared.user') --}}
-            
+
             {{-- Il s'agit d'un component qui fait qu'on peut éviter au maxi @includ() --}}
-            <x-user :user="Auth::user()->name" />
+            <x-user :user="Auth::user()->name ?? '' " />
           </div>
 
         </div>

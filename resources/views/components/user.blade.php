@@ -9,6 +9,8 @@
 </div>
 
 @endauth
+
 @guest
-  <a class="text-light" href="{{ route('auth.login') }}">Se connecter</a>
+<a class="text-light" href="{{ route('auth.login') }}">Se connecter</a>
 @endguest
+
